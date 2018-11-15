@@ -95,9 +95,9 @@ docker-compose up -d
 6) Enjoy.
 
 ## References
-* OpenSTF/stf project - <https://github.com/openstf/stf>
+* **OpenSTF/stf project** - <https://github.com/openstf/stf>
    Original STF. Better to start from there. Many thanks to authors for their work.
-* stf-k8s project -<https://github.com/dimasaryo/stf-k8s>
+* **stf-k8s project** -<https://github.com/dimasaryo/stf-k8s>
    Helps a lot for first deployment.
-* Agoda Android Farm <https://github.com/agoda-com/android-farm>
+* **Agoda Android Farm** <https://github.com/agoda-com/android-farm>
    Helm based deployment. More sofisticated approach. Includes emulators, liveness probes etc. Will be next step.
