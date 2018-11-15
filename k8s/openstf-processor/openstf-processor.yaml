@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openstf-processor
+  labels:
+    app: openstf-processor
+spec:
+  replicas: 1
+  selector:
+    app: openstf-processor
+  template:
+    metadata:
+      labels:
+        app: openstf-processor
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: openstf-processor
+        image: openstf/stf:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        command: ["stf"]
+        args:
+          - processor
+          - "stf-processor"
+          - --connect-app-dealer
+          - "tcp://openstf-triproxy-app:7160"
+          - --connect-dev-dealer
+          - "tcp://openstf-triproxy-dev:7260"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        envFrom:
+          - configMapRef:
+              name: openstf-config
+        env:
+        - name: RETHINKDB_ENV_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: rethinkdb-secret
+              key: AUTHKEY
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP

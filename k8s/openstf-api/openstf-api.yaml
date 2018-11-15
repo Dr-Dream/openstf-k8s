@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openstf-api
+  labels:
+    app: openstf-api
+spec:
+  replicas: 1
+  selector:
+    app: openstf-api
+  template:
+    metadata:
+      labels:
+        app: openstf-api
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: openstf-api
+        image: openstf/stf:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: api
+        command: ["stf"]
+        args:
+          - "api"
+          - --secret
+          - "$(SECRET)"
+          - --port
+          - "3000"
+          - --connect-sub
+          - "tcp://openstf-triproxy-app:7150"
+          - --connect-push
+          - "tcp://openstf-triproxy-app:7170"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        envFrom:
+          - configMapRef:
+              name: openstf-config
+        env:
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              name: openstf-app-secret
+              key: SECRET
+        - name: RETHINKDB_ENV_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: rethinkdb-secret
+              key: AUTHKEY
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP

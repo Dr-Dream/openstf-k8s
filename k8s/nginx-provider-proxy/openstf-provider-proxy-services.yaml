@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openstf-provider-proxy
+  name: openstf-provider-proxy
+spec:
+  ports:
+  - port: 80
+    targetPort: proxy
+    name: proxy
+  selector:
+    app: openstf-provider-proxy

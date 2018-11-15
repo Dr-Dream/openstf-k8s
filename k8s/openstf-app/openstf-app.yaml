@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openstf-app
+  labels:
+    app: openstf-app
+spec:
+  replicas: 1
+  selector:
+    app: openstf-app
+  template:
+    metadata:
+      labels:
+        app: openstf-app
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: openstf-app
+        image: openstf/stf:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: app
+        command: ["stf"]
+        args:
+          - "app"
+          - --secret
+          - "$(SECRET)"
+          - --port
+          - "3000"
+          - --auth-url
+          - "$(OPENSTF_BASE_URL)auth/mock/"
+          - --websocket-url
+          - "$(OPENSTF_WS_URL)"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        envFrom:
+          - configMapRef:
+              name: openstf-config
+        env:
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              name: openstf-app-secret
+              key: SECRET
+        - name: RETHINKDB_ENV_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: rethinkdb-secret
+              key: AUTHKEY
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP

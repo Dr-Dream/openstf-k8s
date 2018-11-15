@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: rethinkdb-admin
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.org/client-max-body-size: "40m"
+    nginx/client-max-body-size: "40m"
+    ingress.kubernetes.io/client-max-body-size: "40m"
+    nginx.ingress.kubernetes.io/proxy-body-size: 40m
+    ingress.kubernetes.io/proxy-body-size: 40m
+spec:
+  rules:
+  - host: rethinkdb.dev.example.ru
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: rethinkdb-admin
+          servicePort: 8080

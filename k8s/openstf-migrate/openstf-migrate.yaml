@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: openstf-migrate
+spec:
+  template:
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: openstf-migrate
+        image: openstf/stf:latest
+        imagePullPolicy: IfNotPresent
+        command: ["stf"]
+        args:
+          - "migrate"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        envFrom:
+          - configMapRef:
+              name: openstf-config
+        env:
+        - name: RETHINKDB_ENV_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: rethinkdb-secret
+              key: AUTHKEY
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+      restartPolicy: Never
+  backoffLimit: 4

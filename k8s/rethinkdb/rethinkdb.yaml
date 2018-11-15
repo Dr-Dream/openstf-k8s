@@ -1,0 +1,68 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: rethinkdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rethinkdb
+  template:
+    metadata:
+      labels:
+        app: rethinkdb
+        db: rethinkdb
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: rethinkdb
+        image: rethinkdb:2.3
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: admin
+        - containerPort: 28015
+          name: driver
+        - containerPort: 29015
+          name: cluster
+        args:
+          - "rethinkdb"
+          - "--cache-size"
+          - "8192"
+          - "--bind"
+          - "all"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        env:
+        - name: AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: rethinkdb-secret
+              key: AUTHKEY
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: RETHINK_CLUSTER
+          value: openstf
+        volumeMounts:
+        - mountPath: /data
+          name: rethinkdb-data
+      volumes:
+        - name: rethinkdb-data
+          persistentVolumeClaim:
+            claimName: rethinkdb-data-claim

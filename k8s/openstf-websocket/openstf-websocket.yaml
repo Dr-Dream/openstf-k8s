@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openstf-websocket
+  labels:
+    app: openstf-websocket
+spec:
+  replicas: 1
+  selector:
+    app: openstf-websocket
+  template:
+    metadata:
+      labels:
+        app: openstf-websocket
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: openstf-websocket
+        image: openstf/stf:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: websocket
+        command: ["stf"]
+        args:
+          - "websocket"
+          - --port
+          - "3000"
+          - --secret
+          - "$(SECRET)"
+          - --storage-url
+          - "$(OPENSTF_BASE_URL)"
+          - --connect-sub
+          - "tcp://openstf-triproxy-app:7150"
+          - --connect-push
+          - "tcp://openstf-triproxy-app:7170"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        envFrom:
+          - configMapRef:
+              name: openstf-config
+        env:
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              name: openstf-app-secret
+              key: SECRET
+        - name: RETHINKDB_ENV_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: rethinkdb-secret
+              key: AUTHKEY
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP

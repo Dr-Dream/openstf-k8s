@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openstf-storage-plugin-apk
+spec:
+  ports:
+   - port: 3000
+     targetPort: apk
+     name: apk
+  selector:
+    app: openstf-storage-plugin-apk

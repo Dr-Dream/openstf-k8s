@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: openstf
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.org/client-max-body-size: "40m"
+    nginx/client-max-body-size: "40m"
+    ingress.kubernetes.io/client-max-body-size: "200m"
+    nginx.ingress.kubernetes.io/proxy-body-size: 200m
+    ingress.kubernetes.io/proxy-body-size: 200m
+    nginx.org/websocket-services: "openstf-websocket,openstf-provider-proxy"
+    ingress.kubernetes.io/websocket-services: "openstf-websocket,openstf-provider-proxy"
+spec:
+  tls:
+  - hosts: 
+    - openstf.dev.example.ru
+  rules:
+  - host: openstf.dev.example.ru
+    http:
+      paths:
+      - path: /s/image/
+        backend:
+          serviceName: openstf-storage-plugin-image
+          servicePort: image
+      - path: /s/apk/
+        backend:
+          serviceName: openstf-storage-plugin-apk
+          servicePort: apk
+      - path: /s/
+        backend:
+          serviceName: openstf-storage-temp
+          servicePort: tmp-storage
+      - path: /socket.io/
+        backend:
+          serviceName: openstf-websocket
+          servicePort: websocket
+      - path: /auth/
+        backend:
+          serviceName: openstf-auth
+          servicePort: auth
+      - path: /api/
+        backend:
+          serviceName: openstf-api
+          servicePort: api
+      - path: /d/dynamic/
+        backend:
+          serviceName: openstf-provider-proxy
+          servicePort: proxy
+      - path: /
+        backend:
+          serviceName: openstf-app
+          servicePort: app

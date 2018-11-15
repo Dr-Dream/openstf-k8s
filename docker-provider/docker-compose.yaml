@@ -1,0 +1,26 @@
+version: '3'
+services:
+ adbservice:
+   container_name: adb
+   restart: always
+   image: sorccu/adb:latest
+   privileged: true
+   network_mode: host
+   ports:
+     - "5037:5037"
+   volumes:
+     - "/dev/bus/usb:/dev/bus/usb"
+     - "/var/adb-service/.android:/root/.android"
+ openstf-provider:
+   container_name: openstf-provider
+   restart: always
+   privileged: true
+   network_mode: host
+   image: openstf/stf:latest
+   ports:
+     - "15000-25000"
+   command: stf provider --name "realdevice" --connect-sub "tcp://devside.openstf.dev.example.ru:7250" --connect-push "tcp://devside.openstf.dev.example.ru:7270" --storage-url "https://openstf.dev.example.ru/" --screen-ws-url-pattern "wss://openstf.dev.example.ru/d/dynamic/<%= serial %>/<%= publicPort %>/<%= publicIp %>/" --public-ip 192.168.10.154 --min-port=15000 --max-port=25000 --heartbeat-interval 10000
+   environment:
+     - NODE_TLS_REJECT_UNAUTHORIZED=0
+   depends_on:
+     - adbservice

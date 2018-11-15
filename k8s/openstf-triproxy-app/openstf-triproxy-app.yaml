@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openstf-triproxy-app
+  labels:
+    app: openstf-triproxy-app
+spec:
+  replicas: 1
+  selector:
+    app: openstf-triproxy-app
+  template:
+    metadata:
+      labels:
+        app: openstf-triproxy-app
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: openstf-triproxy-app
+        image: openstf/stf:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 7150
+            name: bind-pub
+          - containerPort: 7160
+            name: bind-dealer
+          - containerPort: 7170
+            name: bind-pull
+        command: ["stf"]
+        args:
+          - triproxy
+          - "app"
+          - --bind-pub
+          - "tcp://*:7150"
+          - --bind-dealer
+          - "tcp://*:7160"
+          - --bind-pull
+          - "tcp://*:7170"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP

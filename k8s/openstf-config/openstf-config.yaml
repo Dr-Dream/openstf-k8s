@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openstf-config
+data:
+  OPENSTF_SERVER_NAME: "openstf.dev.example.ru"
+  OPENSTF_BASE_URL: "https://openstf.dev.example.ru/"
+  OPENSTF_WS_URL: "wss://openstf.dev.example.ru/"
+  NODE_TLS_REJECT_UNAUTHORIZED: "0"
+  RETHINKDB_PORT_28015_TCP: "tcp://rethinkdb-proxy:28015"
+  
