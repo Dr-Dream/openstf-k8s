@@ -45,22 +45,22 @@ r.db('rethinkdb').table('users').get('admin').update({password:'RETHINKDB_DB_SEC
 ### Applying on k8s
 
 In basic setup you just need to apply everything in 'k8s' subfolders
-* [openstf-config](k8s/openstf-config)
-* [openstf-config](k8s/openstf-config)
-* [openstf-api](k8s/openstf-api)
-* [openstf-app](k8s/openstf-app)
-* [openstf-auth](k8s/openstf-auth)
-* [openstf-ingress](k8s/openstf-ingress)
-* [openstf-migrate](k8s/openstf-migrate)
-* [openstf-processor](k8s/openstf-processor)
-* [openstf-reaper](k8s/openstf-reaper)
-* [openstf-storage-plugin-apk](k8s/openstf-storage-plugin-apk)
-* [openstf-storage-plugin-image](k8s/openstf-storage-plugin-image)
-* [openstf-storage-temp](k8s/openstf-storage-temp)
-* [openstf-triproxy-app](k8s/openstf-triproxy-app)
-* [openstf-triproxy-dev](k8s/openstf-triproxy-dev)
-* [openstf-websocket](k8s/openstf-websocket)
-* [rethinkdb](k8s/rethinkdb)
+* [nginx-provider-proxy](k8s/nginx-provider-proxy) - nginx proxy for screen WebSockets, which routes to existing provider
+* [openstf-config](k8s/openstf-config) - ConfigMap and secrets used by pods
+* [openstf-api](k8s/openstf-api) - stf-api service, Rest API to stf
+* [openstf-app](k8s/openstf-app) - stf-app service.
+* [openstf-auth](k8s/openstf-auth) - stf-auth service, currently Mock.
+* [openstf-ingress](k8s/openstf-ingress) - ingress for k8s nginx ingress controller. 
+* [openstf-migrate](k8s/openstf-migrate) - stf-migrate. k8s job, that initializes db.
+* [openstf-processor](k8s/openstf-processor) - stf-processor, unit that dials appside or devside through triproxy services
+* [openstf-reaper](k8s/openstf-reaper) - stf-reaper. "heartbeat" for devside
+* [openstf-storage-plugin-apk](k8s/openstf-storage-plugin-apk) - stf-storage-plugin-apk. storage for deployed apk.
+* [openstf-storage-plugin-image](k8s/openstf-storage-plugin-image) - stf-storage-image, images preprocessor and storage
+* [openstf-storage-temp](k8s/openstf-storage-temp) - stf-storage-temp. main storage, that stores blobs, file based.
+* [openstf-triproxy-app](k8s/openstf-triproxy-app) - stf-triproxy-app. publisher/subscriber/dialer for application side messages
+* [openstf-triproxy-dev](k8s/openstf-triproxy-dev) - stf-triproxy-app. publisher/subscriber/dialer for device/provider side messages
+* [openstf-websocket](k8s/openstf-websocket) - stf-websocket. WebSocket service for app.
+* [rethinkdb](k8s/rethinkdb) - single instance RethinkDb service.
 
 **Except docker-provider**
 [docker-provider](docker-provider) is a docker-compose to run on machine outside of your k8s installation.
