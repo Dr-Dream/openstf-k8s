@@ -17,6 +17,7 @@ But it was good quick start, and i hope it will help someone.
 * Secrets:
    * "RETHINKDB_DB_SECRET" - as RethinkDB authkey
    * "OPENSTF_SECRET" - as STF web token secret.
+* All app and pods prefixed with 'openstf-', instead of original 'stf-'. This done because k8s provides a lot of information about pods and services in environment variables. For example stf-app will have a lot of variables started with STF_APP, so there are some conflicts, due stf services are also managed through environment in same manner. This is done to prevent conflicts.
  
 ## Setting Up
 
