@@ -96,7 +96,7 @@ docker-compose up -d
 
 ## References
 * OpenSTF/stf project - <https://github.com/openstf/stf>
-   Original STF. Better to start from here. Many thanks to authors for their work.
+   Original STF. Better to start from there. Many thanks to authors for their work.
 * stf-k8s project -<https://github.com/dimasaryo/stf-k8s>
    Helps a lot for first deployment.
 * Agoda Android Farm <https://github.com/agoda-com/android-farm>
